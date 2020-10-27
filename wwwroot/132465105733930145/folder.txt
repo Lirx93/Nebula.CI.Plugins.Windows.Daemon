@@ -1,0 +1,8 @@
+load "%1" "%2"
+select all.diff
+expand all
+compare rules-based
+folder-report layout:side-by-side &
+   options:column-size,column-version,column-timestamp &
+   output-to:clipboard output-options:html-color
+folder-report layout:xml output-to:"%3"

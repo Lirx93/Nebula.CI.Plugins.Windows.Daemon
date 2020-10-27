@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<bcreport created="2020/10/7 10:16:14">
+	<foldercomp>
+		<ltpath>D:\WorkSpace\ecmp\微服务\Nebula.CI.Plugins.WindowsService\wwwroot\132465105733930145\aaa</ltpath>
+		<rtpath>D:\WorkSpace\ecmp\微服务\Nebula.CI.Plugins.WindowsService\wwwroot\132465105733930145\bbb</rtpath>
+		<filecomp status="same">
+			<lt>
+				<name>1.txt</name>
+				<size>10</size>
+				<modified>2020/9/21 19:39:00</modified>
+			</lt>
+			<rt>
+				<name>1.txt</name>
+				<size>10</size>
+				<modified>2020/9/21 19:39:00</modified>
+			</rt>
+		</filecomp>
+		<filecomp status="rtnewer">
+			<lt>
+				<name>2.txt</name>
+				<size>15</size>
+				<modified>2020/9/21 19:39:04</modified>
+			</lt>
+			<rt>
+				<name>2.txt</name>
+				<size>22</size>
+				<modified>2020/9/21 19:41:04</modified>
+			</rt>
+		</filecomp>
+	</foldercomp>
+</bcreport>
