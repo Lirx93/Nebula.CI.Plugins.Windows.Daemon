@@ -25,7 +25,7 @@ namespace Nebula.CI.Plugins.WindowsService.Controllers
         [HttpPost("")]
         public async Task<ActionResult> ExecCmd([FromForm] IFormCollection formCollection)
         {
-            string path = Directory.GetCurrentDirectory() + "/wwwroot/" + DateTime.Now.ToFileTimeUtc().ToString(); 
+            string path = "C:\\nebula.ci\\" + DateTime.Now.ToFileTimeUtc().ToString(); 
             System.IO.Directory.CreateDirectory(path);
             
             foreach (var file in formCollection.Files) {
@@ -50,7 +50,39 @@ namespace Nebula.CI.Plugins.WindowsService.Controllers
             {
                 param += substr[i] + " ";
             }
-
+            
+            if(command != "contestbed" && command != "contbrun")
+            {
+                resultPath = path + "/" + resultPath;
+            }
+            else
+            {
+                resultPath = "C:\\LDRA_Workarea_CEE_9.4.6\\Tbwrkfls";
+                try
+                {
+                    DirectoryInfo dir = new DirectoryInfo(resultPath);
+                    FileSystemInfo[] fileinfo = dir.GetFileSystemInfos();  //返回目录中所有文件和子目录
+                    foreach (FileSystemInfo i in fileinfo)
+                    {
+                        if (i is DirectoryInfo)            //判断是否文件夹
+                        {
+                            DirectoryInfo subdir = new DirectoryInfo(i.FullName);
+                            subdir.Delete(true);          //删除子目录和文件
+                        }
+                        else
+                        {
+                            FileInfo file = new FileInfo(i.FullName);
+                            file.Delete();      //删除指定文件
+                        }
+                    }               
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
+            }
+            string ret = "command: " + command +"  param：" + param +" \n";
+            ret += "workpath: " + path + "\n";
             //创建一个ProcessStartInfo对象 使用系统shell 指定命令和参数 设置标准输出
             var psi = new ProcessStartInfo(command, param) {RedirectStandardOutput = true};
             psi.WorkingDirectory = path;
@@ -71,7 +103,7 @@ namespace Nebula.CI.Plugins.WindowsService.Controllers
             }
             else
             {
-                string ret = "-------------Start read standard output--------------\n";
+                ret += "-------------Start read standard output--------------\n";
                 //开始读取
                 using (var sr = proc.StandardOutput)
                 {
@@ -88,15 +120,17 @@ namespace Nebula.CI.Plugins.WindowsService.Controllers
                 ret += "---------------Read end------------------\n";
                 ret += $"Total execute time :{(proc.ExitTime-proc.StartTime).TotalMilliseconds} ms\n";
                 ret += $"Exited Code ： {proc.ExitCode}\n";
+                //ret += $"Error ： {proc.StandardError.ReadToEnd()}\n";
 
-                await System.IO.File.WriteAllTextAsync(path + "/" + resultPath + "/log", ret);
-                if(System.IO.File.Exists(Directory.GetCurrentDirectory() + "/wwwroot/result.zip"))
+                await System.IO.File.WriteAllTextAsync(resultPath + "/log", ret);
+                if(System.IO.File.Exists("C:\\nebula.ci\\result.zip"))
                 {
-                    System.IO.File.Delete(Directory.GetCurrentDirectory() + "/wwwroot/result.zip");
+                    System.IO.File.Delete("C:\\nebula.ci\\result.zip");
                 }
                 
-                ZipFile.CreateFromDirectory(path + "/" + resultPath, Directory.GetCurrentDirectory() + "/wwwroot/result.zip");
-                var stream = System.IO.File.OpenRead(Directory.GetCurrentDirectory() + "/wwwroot/result.zip");
+                ZipFile.CreateFromDirectory(resultPath, "C:\\nebula.ci\\result.zip");
+                //ZipFile.CreateFromDirectory("D:\\LDRA_Workarea_CEE_9.4.6\\Tbwrkfls", Directory.GetCurrentDirectory() + "/wwwroot/result.zip");
+                var stream = System.IO.File.OpenRead("C:\\nebula.ci\\result.zip");
                 return File(stream, "application/zip", "result.zip");
             }
         }
